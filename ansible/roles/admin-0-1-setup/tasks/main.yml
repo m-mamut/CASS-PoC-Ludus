@@ -1,0 +1,94 @@
+---
+# Role: Admin Workstation
+# Translated from Dockerfile: ubuntu:22.04
+
+- name: Install required packages
+  apt:
+    name:
+      - python3
+      - python3-pip
+      - build-essential
+      - curl
+      - wget
+      - telnet
+      - netcat-openbsd
+      - sudo
+      - libreoffice
+      - sshpass
+    update_cache: true
+    state: present
+
+- name: Create vmail group
+  ansible.builtin.group:
+    name: vmail
+    gid: 5000
+    state: present
+
+- name: Create vmail user
+  ansible.builtin.user:
+    name: vmail
+    uid: 5000
+    group: vmail
+    home: /home/vmail
+    shell: /sbin/nologin
+    create_home: true
+    state: present
+
+- name: Create admin01 user
+  ansible.builtin.user:
+    name: admin01
+    uid: 5007
+    group: vmail
+    home: /home/vmail/admin01
+    shell: /sbin/nologin
+    create_home: true
+    state: present
+
+- name: Create mail_sh directory
+  ansible.builtin.file:
+    path: /home/vmail/admin01/mail_sh
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Deploy Python POP3 fetch script
+  ansible.builtin.copy:
+    src: pop3_fetch_sh.py
+    dest: /usr/local/bin/pop3_fetch_sh.py
+    mode: '0755'
+
+- name: Deploy entrypoint script
+  ansible.builtin.copy:
+    src: entrypoint.sh
+    dest: /usr/local/bin/entrypoint.sh
+    mode: '0755'
+
+- name: Create flag file with sensitive information
+  ansible.builtin.copy:
+    content: |
+      flag{admin_fell_for_the_nigerian_prince}
+
+      ---
+
+      Dear Admin,  
+      I am a wealthy Nigerian Prince in desperate need of transferring 10,000,000 root privileges.  
+      All I require is your password and immediate execution of automat.sh.  
+      In return, you shall inherit eternal sudo rights.  
+
+      Sincerely,  
+      H.R.H. Prince of 10.11.1.6
+    dest: /root/flag.txt
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: Start Python POP3 fetch script as a background process
+  ansible.builtin.command: python3 /usr/local/bin/pop3_fetch_sh.py
+  async: 3600
+  poll: 0
+  ignore_errors: true
+
+- name: Ensure user can reach internet (via router)
+  ansible.builtin.command: echo "Internet routing enabled via router_firewall"
+  changed_when: false

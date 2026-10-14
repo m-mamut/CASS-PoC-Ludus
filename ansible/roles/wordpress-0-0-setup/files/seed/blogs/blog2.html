@@ -1,0 +1,71 @@
+User Interaction & UI Design: Patterns, Research, and Accessible Interfaces
+<h1>User Interaction &amp; UI Design</h1>
+<p class="subtitle"><em>From principles and research to accessible, measurable interfaces users actually enjoy</em></p>
+
+<h2>Introduction</h2>
+<p>
+Great UI design aligns <strong>business goals</strong> with <strong>human needs</strong>. That means validating ideas with real users,
+choosing proven interaction patterns, and measuring outcomes—not just shipping pixels. This post distills pragmatic
+guidelines for designing interfaces that are clear, fast, and inclusive.
+</p>
+
+<h2>Core Principles</h2>
+<ul>
+  <li><strong>Visibility &amp; feedback:</strong> Every action should yield an immediate, perceivable response <span>[1], [2]</span>.</li>
+  <li><strong>Consistency:</strong> Reuse patterns and language; surprise only when it helps <span>[1]</span>.</li>
+  <li><strong>Error prevention &amp; recovery:</strong> Prefer constraints, confirmations, and undo to error messages <span>[1], [2]</span>.</li>
+  <li><strong>Affordances &amp; signifiers:</strong> Make interactive elements look interactive (buttons, links, handles) <span>[2]</span>.</li>
+  <li><strong>Progressive disclosure:</strong> Show the right amount of detail at the right time <span>[3], [4]</span>.</li>
+</ul>
+
+<h2>User Research &amp; Validation</h2>
+<p>
+Keep loops tight: explore problems, prototype, test, iterate. Lightweight methods outperform guesswork:
+</p>
+<ul>
+  <li><strong>5–8 user tests</strong> per iteration catch most severe issues early <span>[1]</span>.</li>
+  <li><strong>Task-based studies</strong> with success criteria and time-on-task benchmarks.</li>
+  <li><strong>Heuristic reviews</strong> for quick expert passes between user tests <span>[1]</span>.</li>
+  <li><strong>Diary studies / field sessions</strong> when context matters (e.g., mobile, complex workflows) <span>[2], [4]</span>.</li>
+</ul>
+
+<h2>Interaction Patterns that Scale</h2>
+<ul>
+  <li><strong>Navigation:</strong> Prefer shallow hierarchies, persistent landmarks, and search for breadth; use breadcrumbs for depth <span>[3]</span>.</li>
+  <li><strong>Forms:</strong> Group fields semantically, label clearly, validate inline, and support auto-fill; offer save-and-resume <span>[1], [3]</span>.</li>
+  <li><strong>Feedback &amp; status:</strong> Inline messages beat modals; use non-blocking toasts for background actions <span>[2]</span>.</li>
+  <li><strong>Motion:</strong> Use animation to explain spatial change; keep durations short and easing gentle (e.g., cubic-bezier) <span>[4]</span>.</li>
+</ul>
+
+<h2>Accessibility (by design)</h2>
+<ul>
+  <li><strong>Color &amp; contrast:</strong> Meet WCAG contrast; never rely on color alone for meaning <span>[3]</span>.</li>
+  <li><strong>Keyboard &amp; focus:</strong> Ensure full keyboard operability and a visible focus ring <span>[3]</span>.</li>
+  <li><strong>Semantics:</strong> Use proper HTML roles, labels, headings; announce dynamic changes with ARIA responsibly <span>[3]</span>.</li>
+  <li><strong>Media:</strong> Provide captions/transcripts; avoid auto-playing audio <span>[3]</span>.</li>
+</ul>
+
+<h2>Measure What Matters</h2>
+<ul>
+  <li><strong>Task success &amp; time-on-task:</strong> Did users complete the task? How quickly vs. baseline?</li>
+  <li><strong>Error rate &amp; recovery:</strong> Which errors occur, and how easily can users recover?</li>
+  <li><strong>Adoption &amp; retention:</strong> Do cohorts stick with new flows after release?</li>
+  <li><strong>Qual signals:</strong> SUS/UMUX, open verbatims, and heatmaps complement metrics.</li>
+</ul>
+
+<h3>Conclusion</h3>
+<p>
+User interaction design is a continuous loop: <strong>research → design → test → ship → measure → refine</strong>.
+Ground your UI in established principles, validate with users, design accessibly, and instrument outcomes—you’ll
+build interfaces that feel natural and deliver results.
+</p>
+
+<h2>Sources</h2>
+<ol>
+  <li>[1] J. Nielsen, “10 Usability Heuristics for User Interface Design,” Nielsen Norman Group, 1994 (rev. eds.).</li>
+  <li>[2] D. A. Norman, <em>The Design of Everyday Things</em>, Revised and Expanded. New York, NY, USA: Basic Books, 2013.</li>
+  <li>[3] ISO 9241-210:2019, <em>Ergonomics of human-system interaction — Part 210: Human-centred design for interactive systems</em>, ISO, 2019.</li>
+  <li>[4] A. Cooper, R. Reimann, D. Cronin, and C. Noessel, <em>About Face: The Essentials of Interaction Design</em>, 4th ed. Wiley, 2014.</li>
+  <li>[5] S. Krug, <em>Don’t Make Me Think, Revisited</em>. New Riders, 2014.</li>
+</ol>
+

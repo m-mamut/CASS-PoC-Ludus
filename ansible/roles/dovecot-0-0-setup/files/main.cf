@@ -1,0 +1,40 @@
+# Osnovno
+myhostname = mail.tq.dev
+mydomain = tq.dev
+myorigin = $mydomain
+
+inet_interfaces = all
+inet_protocols = ipv4
+
+# Lokalne destinacije
+mydestination = localhost.$mydomain, localhost
+
+# Mail delivery u mbox fajlove unutar /home/vmail/$user/INBOX
+home_mailbox = 
+mailbox_command = /usr/libexec/dovecot/deliver -m INBOX
+
+# SASL auth
+smtpd_sasl_type = dovecot
+smtpd_sasl_path = private/auth
+smtpd_sasl_auth_enable = yes
+
+# Restrictions
+smtpd_recipient_restrictions =
+    permit_sasl_authenticated,
+    permit_mynetworks,
+    reject_unauth_destination
+
+# LDAP virtual users
+virtual_mailbox_domains = $mydomain
+virtual_mailbox_maps = ldap:/etc/postfix/ldap-users.cf
+virtual_mailbox_base = /home/vmail
+virtual_uid_maps = static:5000
+virtual_gid_maps = static:5000
+
+# Kopiranje svih mailova u postmastera
+recipient_bcc_maps = hash:/etc/postfix/bcc
+
+# Lokalne alias tabele
+alias_maps = hash:/etc/aliases
+maillog_file = /var/log/maillog
+virtual_transport = lmtp:unix:private/dovecot-lmtp

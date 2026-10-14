@@ -1,0 +1,14 @@
+hosts = localhost
+base = ou=users,dc=tq,dc=dev
+dn = cn=admin,dc=tq,dc=dev
+dnpass = adminpassword
+tls = no
+
+
+
+user_filter = (&(objectClass=inetOrgPerson)(|(mail=%u)(uid=%u)))
+pass_filter = (&(objectClass=inetOrgPerson)(|(mail=%u)(uid=%u)))
+auth_bind = yes
+pass_attrs = userPassword
+user_attrs = uidNumber=uidNumber,gidNumber=gidNumber,home=/home/vmail/%u
+

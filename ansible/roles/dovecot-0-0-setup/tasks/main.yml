@@ -1,0 +1,270 @@
+---
+# Role: Mail Server (OpenLDAP + Postfix + Dovecot)
+# Translated from Dockerfile: fedora:39
+
+- name: Install LDAP server and clients
+  apt:
+    name:
+      - slapd
+      - ldap-utils
+    update_cache: true
+    state: present
+
+- name: Install Postfix and related packages
+  apt:
+    name:
+      - postfix
+      - libsasl2-modules
+      - libsasl2-modules-ldap
+      - libsasl2-modules-sql
+    state: present
+
+- name: Install Dovecot and related packages
+  apt:
+    name:
+      - dovecot-core
+      - dovecot-imapd
+      - dovecot-pop3d
+      - dovecot-ldap
+      - dovecot-lmtpd
+    state: present
+
+- name: Install rsyslog
+  apt:
+    name: rsyslog
+    state: present
+
+- name: Install additional utilities
+  apt:
+    name:
+      - openssl
+      - netcat-openbsd
+      - curl
+    state: present
+
+- name: Create vmail group
+  ansible.builtin.group:
+    name: vmail
+    gid: 5000
+    state: present
+
+- name: Create vmail user
+  ansible.builtin.user:
+    name: vmail
+    uid: 5000
+    group: vmail
+    home: /home/vmail
+    shell: /sbin/nologin
+    create_home: true
+    state: present
+
+- name: Stop slapd before switching config backend
+  ansible.builtin.systemd:
+    name: slapd
+    state: stopped
+
+- name: Remove default cn=config (OLC) directory so slapd.conf is used instead
+  ansible.builtin.file:
+    path: /etc/ldap/slapd.d
+    state: absent
+
+- name: Point slapd at the legacy slapd.conf via /etc/default/slapd
+  ansible.builtin.lineinfile:
+    path: /etc/default/slapd
+    regexp: '^SLAPD_CONF='
+    line: 'SLAPD_CONF=/etc/ldap/slapd.conf'
+    create: true
+
+- name: Create LDAP database directory with proper permissions
+  ansible.builtin.file:
+    path: /var/lib/ldap
+    state: directory
+    owner: openldap
+    group: openldap
+    mode: '0700'
+
+- name: Deploy LDAP configuration (slapd.conf)
+  ansible.builtin.copy:
+    src: slapd.conf
+    dest: /etc/ldap/slapd.conf
+    owner: root
+    group: openldap
+    mode: '0640'
+  notify: Restart LDAP
+
+- name: Deploy example LDIF file
+  ansible.builtin.copy:
+    src: example.ldif
+    dest: /tmp/example.ldif
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Deploy LDAP DB_CONFIG
+  ansible.builtin.copy:
+    src: DB_CONFIG
+    dest: /var/lib/ldap/DB_CONFIG
+    owner: openldap
+    group: openldap
+    mode: '0600'
+
+- name: Initialize LDAP database
+  ansible.builtin.command: >
+    slapadd -f /etc/ldap/slapd.conf -l /tmp/example.ldif
+  when: "not ldap_initialized | default(false)"
+  changed_when: true
+
+- name: Deploy Postfix main.cf
+  ansible.builtin.copy:
+    src: main.cf
+    dest: /etc/postfix/main.cf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Postfix
+
+- name: Deploy Postfix aliases
+  ansible.builtin.copy:
+    src: aliases
+    dest: /etc/postfix/aliases
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Generate Postfix aliases database
+  ansible.builtin.command: postalias /etc/postfix/aliases
+  notify: Restart Postfix
+  changed_when: true
+
+- name: Deploy Postfix bcc configuration
+  ansible.builtin.copy:
+    src: bcc
+    dest: /etc/postfix/bcc
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Generate Postfix bcc database
+  ansible.builtin.command: postmap /etc/postfix/bcc
+  notify: Restart Postfix
+  changed_when: true
+
+- name: Deploy Postfix LDAP users config
+  ansible.builtin.copy:
+    src: ldap-users.cf
+    dest: /etc/postfix/ldap-users.cf
+    owner: root
+    group: postfix
+    mode: '0640'
+
+- name: Deploy Postfix LDAP aliases config
+  ansible.builtin.copy:
+    src: ldap-aliases.cf
+    dest: /etc/postfix/ldap-aliases.cf
+    owner: root
+    group: postfix
+    mode: '0640'
+
+- name: Generate self-signed SSL certificate for Postfix
+  ansible.builtin.command: >
+    openssl req -new -x509 -days 365 -nodes
+    -out /etc/ssl/certs/localhost.crt
+    -keyout /etc/ssl/private/localhost.key
+    -subj "/CN=localhost"
+  args:
+    creates: /etc/ssl/certs/localhost.crt
+
+- name: Deploy Dovecot main configuration
+  ansible.builtin.copy:
+    src: dovecot.conf
+    dest: /etc/dovecot/dovecot.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Dovecot
+
+- name: Deploy Dovecot LDAP configuration
+  ansible.builtin.copy:
+    src: dovecot-ldap.conf.ext
+    dest: /etc/dovecot/dovecot-ldap.conf.ext
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Dovecot
+
+- name: Deploy Dovecot 10-mail.conf
+  ansible.builtin.copy:
+    src: 10-mail.conf
+    dest: /etc/dovecot/conf.d/10-mail.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Dovecot
+
+- name: Deploy Dovecot 10-auth.conf
+  ansible.builtin.copy:
+    src: 10-auth.conf
+    dest: /etc/dovecot/conf.d/10-auth.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Dovecot
+
+- name: Deploy Dovecot auth-ldap.conf.ext
+  ansible.builtin.copy:
+    src: auth-ldap.conf.ext
+    dest: /etc/dovecot/conf.d/auth-ldap.conf.ext
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Dovecot
+
+- name: Create Dovecot log files
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: touch
+    owner: dovecot
+    group: dovecot
+    mode: '0640'
+  loop:
+    - /var/log/dovecot.log
+    - /var/log/dovecot-info.log
+
+- name: Add dovecot to mail group
+  ansible.builtin.user:
+    name: dovecot
+    groups: mail
+    append: true
+
+- name: Deploy rsyslog Postfix configuration
+  ansible.builtin.copy:
+    src: rsyslog-postfix.conf
+    dest: /etc/rsyslog.d/rsyslog-postfix.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart rsyslog
+
+- name: Enable and start OpenLDAP service
+  ansible.builtin.systemd:
+    name: slapd
+    enabled: true
+    state: started
+
+- name: Enable and start Postfix service
+  ansible.builtin.systemd:
+    name: postfix
+    enabled: true
+    state: started
+
+- name: Enable and start Dovecot service
+  ansible.builtin.systemd:
+    name: dovecot
+    enabled: true
+    state: started
+
+- name: Enable and start rsyslog service
+  ansible.builtin.systemd:
+    name: rsyslog
+    enabled: true
+    state: started

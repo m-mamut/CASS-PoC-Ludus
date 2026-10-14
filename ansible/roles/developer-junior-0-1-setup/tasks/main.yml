@@ -1,0 +1,115 @@
+---
+# Role: Junior Developer Workstation
+# Translated from Dockerfile: ubuntu:22.04
+
+- name: Install LibreOffice
+  apt:
+    name: libreoffice
+    update_cache: true
+    state: present
+
+- name: Install VS Code prerequisites
+  apt:
+    name:
+      - wget
+      - gpg
+      - software-properties-common
+      - apt-transport-https
+      - libgtk-3-0
+      - libdbus-glib-1-2
+      - libxt6
+      - libasound2
+      - libdrm2
+      - libxcomposite1
+      - libxdamage1
+      - libxrandr2
+      - libxss1
+      - libx11-xcb1
+      - libxcb-shm0
+      - libxcb1
+      - libdbus-1-3
+      - libxkbcommon0
+      - bzip2
+    state: present
+
+- name: Download Microsoft GPG key
+  ansible.builtin.get_url:
+    url: https://packages.microsoft.com/keys/microsoft.asc
+    dest: /tmp/packages.microsoft.asc
+    mode: '0644'
+
+- name: Dearmor Microsoft GPG key
+  ansible.builtin.command: gpg --dearmor -o /usr/share/keyrings/packages.microsoft.gpg /tmp/packages.microsoft.asc
+  args:
+    creates: /usr/share/keyrings/packages.microsoft.gpg
+
+- name: Add VS Code repository
+  ansible.builtin.copy:
+    content: |
+      deb [arch=amd64 signed-by=/usr/share/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main
+    dest: /etc/apt/sources.list.d/vscode.list
+    mode: '0644'
+
+- name: Install Visual Studio Code
+  apt:
+    name: code
+    update_cache: true
+    state: present
+
+- name: Create VS Code config directory
+  ansible.builtin.file:
+    path: /root/.config/Code/User
+    state: directory
+    mode: '0755'
+
+- name: Install Firefox 84.0 dependencies
+  apt:
+    name: bzip2
+    state: present
+
+- name: Create /opt directory if needed
+  ansible.builtin.file:
+    path: /opt
+    state: directory
+    mode: '0755'
+
+- name: Download Firefox 84.0
+  ansible.builtin.get_url:
+    url: https://archive.mozilla.org/pub/firefox/releases/84.0/linux-x86_64/en-US/firefox-84.0.tar.bz2
+    dest: /tmp/firefox-84.0.tar.bz2
+    mode: '0644'
+
+- name: Extract Firefox to /opt
+  ansible.builtin.unarchive:
+    src: /tmp/firefox-84.0.tar.bz2
+    dest: /opt
+    remote_src: true
+    creates: /opt/firefox
+
+- name: Create Firefox symlink
+  ansible.builtin.file:
+    src: /opt/firefox/firefox
+    dest: /usr/local/bin/firefox
+    state: link
+
+- name: Clean up Firefox tarball
+  ansible.builtin.file:
+    path: /tmp/firefox-84.0.tar.bz2
+    state: absent
+
+- name: Create Firefox profile directory
+  ansible.builtin.file:
+    path: /root/.mozilla/firefox
+    state: directory
+    mode: '0755'
+
+- name: Install Thunderbird ESR
+  apt:
+    name: thunderbird
+    state: present
+
+- name: Create Thunderbird profile directory
+  ansible.builtin.file:
+    path: /root/.thunderbird
+    state: directory
+    mode: '0755'

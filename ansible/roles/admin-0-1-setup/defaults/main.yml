@@ -1,0 +1,4 @@
+---
+# Admin workstation configuration
+admin_mail_domain: "tq.dev"
+admin_pop3_server: "10.11.1.6"

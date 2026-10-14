@@ -1,0 +1,72 @@
+---
+# Role: DNS Server (dnsmasq)
+# Translated from Dockerfile: fedora:39 with dnsmasq
+
+- name: Install dnsmasq
+  apt:
+    name:
+      - dnsmasq
+      - dnsutils
+    update_cache: true
+    state: present
+
+- name: Create dnsmasq configuration directory
+  ansible.builtin.file:
+    path: /etc/dnsmasq.d
+    state: directory
+    mode: '0755'
+
+- name: Deploy dnsmasq configuration
+  ansible.builtin.copy:
+    src: dnsmasq.conf
+    dest: /etc/dnsmasq.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart dnsmasq
+
+- name: Deploy custom hosts file
+  ansible.builtin.copy:
+    src: hosts
+    dest: /etc/dnsmasq-hosts
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart dnsmasq
+
+- name: Create /etc/iptables directory
+  ansible.builtin.file:
+    path: /etc/iptables
+    state: directory
+    mode: '0755'
+
+- name: Save iptables rules
+  ansible.builtin.command: iptables-save > /etc/iptables/rules.v4
+  args:
+    creates: /etc/iptables/rules.v4
+
+- name: Enable dnsmasq service
+  ansible.builtin.systemd:
+    name: dnsmasq
+    enabled: true
+    state: started
+
+- name: Allow DNS ports in firewall (if ufw enabled)
+  ansible.builtin.command: ufw allow 53/udp
+  changed_when: false
+  failed_when: false
+
+- name: Allow DNS TCP ports in firewall (if ufw enabled)
+  ansible.builtin.command: ufw allow 53/tcp
+  changed_when: false
+  failed_when: false
+
+- name: Verify dnsmasq is running
+  ansible.builtin.command: systemctl is-active dnsmasq
+  register: dnsmasq_status
+  changed_when: false
+
+- name: Fail if dnsmasq is not active
+  ansible.builtin.fail:
+    msg: "dnsmasq service is not running"
+  when: "dnsmasq_status.rc != 0"

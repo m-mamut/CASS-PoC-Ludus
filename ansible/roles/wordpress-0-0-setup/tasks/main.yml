@@ -1,0 +1,161 @@
+---
+# Role: WordPress Server (Apache + MariaDB + PHP)
+# Translated from Dockerfile: ubuntu:22.04
+
+- name: Install Apache, PHP, and MariaDB
+  apt:
+    name:
+      - apache2
+      - mariadb-server
+      - php
+      - php-mysql
+      - libapache2-mod-php
+      - php-xml
+      - php-mbstring
+      - php-zip
+      - php-gd
+      - php-curl
+      - php-dom
+      - curl
+      - unzip
+      - ca-certificates
+      - less
+    update_cache: true
+    state: present
+
+- name: Enable Apache rewrite module
+  ansible.builtin.command: a2enmod rewrite
+  changed_when: true
+  notify: Restart Apache
+
+- name: Install WP-CLI
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+    dest: /usr/local/bin/wp
+    mode: '0755'
+  become: true
+
+- name: Create WordPress directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+  loop:
+    - /var/www/html
+    - /var/www/html/wp-content
+    - /var/www/html/wp-content/mu-plugins
+
+- name: Deploy Apache default virtual host configuration
+  ansible.builtin.copy:
+    src: apache/000-default.conf
+    dest: /etc/apache2/sites-available/000-default.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Apache
+
+- name: Deploy Apache servername configuration
+  ansible.builtin.copy:
+    src: apache/servername.conf
+    dest: /etc/apache2/conf-available/servername.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Enable servername configuration
+  ansible.builtin.command: a2enconf servername
+  changed_when: true
+  notify: Restart Apache
+
+- name: Deploy .htaccess file
+  ansible.builtin.copy:
+    src: apache/.htaccess
+    dest: /var/www/html/.htaccess
+    owner: www-data
+    group: www-data
+    mode: '0644'
+
+- name: Deploy custom sudoers rule for www-data (GTFOBins)
+  ansible.builtin.copy:
+    content: "www-data ALL=(ALL) NOPASSWD: /usr/bin/tar\n"
+    dest: /etc/sudoers.d/www-data-tar
+    mode: '0440'
+    validate: visudo -cf %s
+
+- name: Deploy custom theme (astra-child)
+  ansible.builtin.copy:
+    src: wp-content/themes/astra-child/
+    dest: /var/www/html/wp-content/themes/astra-child/
+    owner: www-data
+    group: www-data
+    mode: '0755'
+    directory_mode: '0755'
+
+- name: Deploy logo asset
+  ansible.builtin.copy:
+    src: assets/logo.png
+    dest: /var/www/html/favicon.png
+    owner: www-data
+    group: www-data
+    mode: '0644'
+
+- name: Install Python3 and pip
+  apt:
+    name:
+      - python3
+      - python3-pip
+    state: present
+
+- name: Install Playwright dependencies
+  ansible.builtin.command: "{{ item }}"
+  loop:
+    - pip3 install playwright==1.46.0 --break-system-packages
+    - playwright install firefox
+    - playwright install-deps firefox
+  changed_when: true
+
+- name: Deploy WordPress init script
+  ansible.builtin.copy:
+    src: init.sh
+    dest: /init.sh
+    mode: '0755'
+
+- name: Deploy WordPress visit script
+  ansible.builtin.copy:
+    src: wp_visit.py
+    dest: /usr/local/bin/wp_visit.py
+    mode: '0755'
+
+- name: Deploy seed blog data
+  ansible.builtin.copy:
+    src: seed/blogs/
+    dest: /opt/blogs/
+    mode: '0755'
+    directory_mode: '0755'
+
+- name: Start MariaDB service
+  ansible.builtin.systemd:
+    name: mariadb
+    enabled: true
+    state: started
+
+- name: Start Apache service
+  ansible.builtin.systemd:
+    name: apache2
+    enabled: true
+    state: started
+
+- name: Create systemd service for WordPress initialization
+  ansible.builtin.template:
+    src: wordpress_init.service.j2
+    dest: /etc/systemd/system/wordpress-init.service
+    mode: '0644'
+  notify: Reload systemd
+
+- name: Enable WordPress initialization service
+  ansible.builtin.systemd:
+    name: wordpress-init
+    enabled: true
+    state: started

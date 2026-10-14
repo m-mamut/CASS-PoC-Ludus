@@ -1,0 +1,23 @@
+---
+- name: Restart LDAP
+  ansible.builtin.systemd:
+    name: slapd
+    state: restarted
+    daemon_reload: true
+
+- name: Restart Postfix
+  ansible.builtin.systemd:
+    name: postfix
+    state: restarted
+    daemon_reload: true
+
+- name: Restart Dovecot
+  ansible.builtin.systemd:
+    name: dovecot
+    state: restarted
+    daemon_reload: true
+
+- name: Restart rsyslog
+  ansible.builtin.systemd:
+    name: rsyslog
+    state: restarted

@@ -1,0 +1,8 @@
+server_host = 127.0.0.1
+search_base = ou=users,dc=tq,dc=dev
+query_filter = (uid=%u)
+result_attribute = uid
+bind = yes
+bind_dn = cn=admin,dc=tq,dc=dev
+bind_pw = adminpassword
+version = 3

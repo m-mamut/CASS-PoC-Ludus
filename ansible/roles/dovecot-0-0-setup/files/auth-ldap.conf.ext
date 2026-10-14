@@ -1,0 +1,14 @@
+# /etc/dovecot/conf.d/auth-ldap.conf.ext
+
+passdb {
+  driver = ldap
+  args = /etc/dovecot/dovecot-ldap.conf.ext
+}
+
+userdb {
+  driver = ldap
+  args = /etc/dovecot/dovecot-ldap.conf.ext
+  # Ako Maildir ne postoji, Dovecot će ga kreirati automatski
+  default_home = /var/mail/%u
+  auto = yes
+}

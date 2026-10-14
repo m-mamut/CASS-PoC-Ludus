@@ -1,0 +1,98 @@
+dn: dc=tq,dc=dev
+objectClass: top
+objectClass: dcObject
+objectClass: organization
+o: Example Organization
+dc: tq
+
+dn: ou=users,dc=tq,dc=dev
+objectClass: organizationalUnit
+ou: users
+
+dn: cn=admin,dc=tq,dc=dev
+objectClass: simpleSecurityObject
+objectClass: organizationalRole
+cn: admin
+userPassword: adminpassword
+
+dn: uid=user1,ou=users,dc=tq,dc=dev
+objectClass: inetOrgPerson
+objectClass: posixAccount
+cn: User One
+sn: One
+uid: user1
+mail: user1@tq.dev
+uidNumber: 5001
+gidNumber: 5000
+homeDirectory: /home/vmail/user1
+loginShell: /sbin/nologin
+userPassword: password
+
+dn: uid=postmaster,ou=users,dc=tq,dc=dev
+objectClass: inetOrgPerson
+objectClass: posixAccount
+cn: Post Master
+sn: Master
+uid: postmaster
+mail: postmaster@tq.dev
+uidNumber: 5002
+gidNumber: 5000
+homeDirectory: /home/vmail/postmaster
+loginShell: /sbin/nologin
+userPassword: hotmail
+
+# Admin server user
+dn: uid=admin01,ou=users,dc=tq,dc=dev
+objectClass: inetOrgPerson
+objectClass: posixAccount
+cn: Admin Server
+sn: Server
+uid: admin01
+mail: admin01@tq.dev
+uidNumber: 5007
+gidNumber: 5000
+homeDirectory: /home/vmail/admin01
+loginShell: /sbin/nologin
+userPassword: adminpass
+
+# Junior developer
+dn: uid=devjunior,ou=users,dc=tq,dc=dev
+objectClass: inetOrgPerson
+objectClass: posixAccount
+cn: Junior Developer
+sn: Developer
+uid: devjunior
+mail: devjunior@tq.dev
+uidNumber: 5008
+gidNumber: 5000
+homeDirectory: /home/vmail/devjunior
+loginShell: /sbin/nologin
+userPassword: juniorpass
+
+# Senior developer
+dn: uid=devsenior,ou=users,dc=tq,dc=dev
+objectClass: inetOrgPerson
+objectClass: posixAccount
+cn: Senior Developer
+sn: Developer
+uid: devsenior
+mail: devsenior@tq.dev
+uidNumber: 5009
+gidNumber: 5000
+homeDirectory: /home/vmail/devsenior
+loginShell: /sbin/nologin
+userPassword: seniorpass
+
+# CEO account
+dn: uid=ceo,ou=users,dc=tq,dc=dev
+objectClass: inetOrgPerson
+objectClass: posixAccount
+cn: Chief Executive Officer
+sn: Officer
+uid: ceo
+mail: ceo@tq.dev
+uidNumber: 5010
+gidNumber: 5000
+homeDirectory: /home/vmail/ceo
+loginShell: /sbin/nologin
+userPassword: ceopass

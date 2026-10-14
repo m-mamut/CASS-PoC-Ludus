@@ -1,0 +1,23 @@
+manifest_version: 1
+id: CASS-PoC-Ludus
+name: "Dev Firm Pentesting Scenario"
+description: >
+  In this lab, you are tasked with performing a simulated penetration test on a development firm's network.
+  You will start from a publicly accessible web server, gather information, find vulnerabilities,
+  and attempt to escalate privileges to gain administrative access.
+
+  Lab demonstrates the full attack lifecycle from reconnaissance to post-exploitation,
+  including web exploitation, reverse shells, privilege escalation, and credential harvesting.
+  Target environment includes: WordPress web server, mail server (Dovecot/Postfix/LDAP),
+  developer workstations, admin workstation, and a multi-segment network with firewall.
+
+  Goal: Obtain a shell on the target machine with root privileges and access sensitive information.
+version: "1.0.0"
+tags:
+  - docker-security-playground
+  - web-exploitation
+  - privilege-escalation
+  - post-exploitation
+  - intermediate
+min_ludus_version: "1.0.0"
+config: range-config.yml

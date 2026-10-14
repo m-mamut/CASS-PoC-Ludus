@@ -1,0 +1,17 @@
+---
+# LDAP Configuration
+ldap_admin_password: "adminpassword"
+ldap_basedn: "dc=tq,dc=dev"
+
+# Mail Configuration
+mail_domain: "tq.dev"
+
+# Service ports
+ldap_port: 389
+smtp_port: 25
+smtps_port: 465
+submission_port: 587
+pop3_port: 110
+imap_port: 143
+pop3s_port: 995
+imaps_port: 993

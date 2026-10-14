@@ -1,0 +1,16 @@
+---
+- name: Restart Apache
+  ansible.builtin.systemd:
+    name: apache2
+    state: restarted
+    daemon_reload: true
+
+- name: Restart MariaDB
+  ansible.builtin.systemd:
+    name: mariadb
+    state: restarted
+    daemon_reload: true
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true

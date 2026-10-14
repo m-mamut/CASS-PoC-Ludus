@@ -1,0 +1,7 @@
+# Mail server
+10.11.1.6   tq.dev mail.tq.dev
+
+# Ostali lokalni hostovi (prema tvojoj mreži)
+10.11.1.134 admin.lan admin
+10.11.1.136 devjunior.lan devjunior
+10.11.1.137 devsenior.lan devsenior

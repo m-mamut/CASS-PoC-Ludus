@@ -1,0 +1,62 @@
+Design Systems: Consistency, Speed, and Quality at Scale
+<h1>Design Systems: Consistency, Speed, and Quality at Scale</h1>
+<p class="subtitle"><em>How shared tokens, components, and guidelines level-up teams and products</em></p>
+
+<h2>Introduction</h2>
+<p>
+A good design system turns scattered UI decisions into a reliable product engine. With shared tokens, components, and usage guidelines,
+teams ship faster, reduce defects, and deliver consistent experiences across platforms.
+This post summarizes practical patterns that make a design system stick.
+</p>
+
+<h2>Core Building Blocks</h2>
+<ul>
+  <li><strong>Design tokens:</strong> The single source of truth for color, spacing, typography, radius, and motion. Store them in code (JSON) and consume them across web, iOS, and Android.</li>
+  <li><strong>Components:</strong> Accessible, documented, and versioned. Each component ships usage guidelines, anatomy, states, and code examples.</li>
+  <li><strong>Foundations:</strong> Grid, elevation, iconography, layout primitives, and motion rules that guide composition.</li>
+</ul>
+
+<h2>Operational Practices</h2>
+<ul>
+  <li><strong>Source of truth repo:</strong> Keep tokens + component packages in a monorepo (or well-linked repos) with semantic versioning and automated releases.</li>
+  <li><strong>Docs site:</strong> A searchable site with live code examples, “dos &amp; don’ts,” and copy-paste snippets. Treat docs as a product.</li>
+  <li><strong>Change management:</strong> RFCs for breaking changes, deprecation timelines, and migration guides.</li>
+  <li><strong>Governance:</strong> A small core team curates; a wider guild contributes via PRs and design reviews.</li>
+</ul>
+
+<h2>Accessibility by Default</h2>
+<ul>
+  <li>Keyboard support, focus management, and ARIA semantics built into components.</li>
+  <li>Color tokens meet contrast ratios; dark mode variants are first-class.</li>
+  <li>Motion guidelines include reduced-motion fallbacks.</li>
+</ul>
+
+<h2>Adoption &amp; Measurement</h2>
+<ul>
+  <li><strong>Distribution:</strong> Publish as npm packages; provide Figma libraries that mirror code.</li>
+  <li><strong>Linting:</strong> ESLint/stylelint rules to flag off-system patterns.</li>
+  <li><strong>Metrics:</strong> Track component adoption, PR cycle time, bug rates, and design drift.</li>
+</ul>
+
+<h2>Anti-Patterns to Avoid</h2>
+<ul>
+  <li><strong>Docs without code:</strong> Pretty guidelines that engineers can’t consume.</li>
+  <li><strong>Forked variants:</strong> Multiple “almost the same” buttons that diverge over time.</li>
+  <li><strong>One-off overrides:</strong> Inline CSS and ad-hoc tokens that bypass the system.</li>
+</ul>
+
+<h3>Conclusion</h3>
+<p>
+Design systems succeed when they are the easiest <em>and</em> most reliable way to build. Start with tokens, ship a small set of robust components,
+document relentlessly, and measure adoption. Keep the bar high on accessibility and change management, and your system will scale with the product.
+</p>
+
+<h2>Sources</h2>
+<ol>
+  <li>[1] Google, <em>Material Design</em> (Foundations, Components, Accessibility).</li>
+  <li>[2] IBM, <em>Carbon Design System</em> (Design tokens, Component guidelines, Governance).</li>
+  <li>[3] Salesforce, <em>Lightning Design System</em> (Utility classes, Accessibility patterns).</li>
+  <li>[4] W3C, <em>WAI-ARIA Authoring Practices</em> (Keyboard interaction and roles).</li>
+  <li>[5] Nielsen Norman Group, “Design Systems 101” (Benefits, adoption, and pitfalls).</li>
+</ol>
+

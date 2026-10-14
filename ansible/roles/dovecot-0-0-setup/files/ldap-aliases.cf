@@ -1,0 +1,8 @@
+server_host = 127.0.0.1
+search_base = ou=aliases,dc=tq,dc=dev
+query_filter = (uid=%s)
+result_attribute = mail
+bind = yes
+bind_dn = cn=admin,dc=tq,dc=dev
+bind_pw = adminpassword
+version = 3

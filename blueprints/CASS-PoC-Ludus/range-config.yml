@@ -1,0 +1,94 @@
+ludus:
+  # VLAN 10: network_0 (10.11.1.0/25) - Core infrastructure
+  - vm_name: dns-server
+    hostname: dns-server
+    template: debian-12-x64-server-template
+    vlan: 10
+    ip_last_octet: 50
+    ram_gb: 2
+    cpus: 2
+    roles:
+      - dns-server-setup
+    linux: true
+
+  - vm_name: dovecot-0-0
+    hostname: dovecot-0-0
+    template: debian-12-x64-server-template
+    vlan: 10
+    ip_last_octet: 6
+    ram_gb: 2
+    cpus: 2
+    roles:
+      - dovecot-0-0-setup
+    linux: true
+
+  - vm_name: admin-0-1
+    hostname: admin-0-1
+    template: debian-12-x64-server-template
+    vlan: 10
+    ip_last_octet: 27
+    ram_gb: 2
+    cpus: 2
+    roles:
+      - admin-0-1-setup
+    linux: true
+
+  # VLAN 20: network_1 (10.11.1.128/25) - Developer network
+  - vm_name: developer-junior-0-1
+    hostname: developer-junior-0-1
+    template: debian-12-x64-server-template
+    vlan: 20
+    ip_last_octet: 136
+    ram_gb: 2
+    cpus: 2
+    roles:
+      - developer-junior-0-1-setup
+    linux: true
+
+  - vm_name: developer-senior-0-1
+    hostname: developer-senior-0-1
+    template: debian-12-x64-server-template
+    vlan: 20
+    ip_last_octet: 137
+    ram_gb: 2
+    cpus: 2
+    roles:
+     - developer-senior-0-1-setup
+    linux: true
+
+  # VLAN 30: network_2 (10.11.2.0/25) - Web server network
+  - vm_name: wordpress-0-0
+    hostname: wordpress-0-0
+    template: debian-12-x64-server-template
+    vlan: 30
+    ip_last_octet: 6
+    ram_gb: 4
+    cpus: 2
+    roles:
+      - wordpress-0-0-setup
+    linux: true
+
+  # VLAN 20: router_firewall (multi-home, primary on network_0)
+  - vm_name: router-firewall
+    hostname: router-firewall
+    template: debian-12-x64-server-template
+    vlan: 10
+    ip_last_octet: 3
+    ram_gb: 2
+    cpus: 2
+    roles:
+      - router-firewall-setup
+    linux: true
+
+  # VLAN 40: internet (192.168.99.0/24) - Attacker
+  - vm_name: attacker
+    hostname: attacker
+    template: kali-x64-desktop-template
+    vlan: 40
+    ip_last_octet: 10
+    ram_gb: 4
+    cpus: 2
+    roles:
+     - attacker-setup
+    linux: true
+

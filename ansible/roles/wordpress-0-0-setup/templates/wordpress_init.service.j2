@@ -1,0 +1,23 @@
+[Unit]
+Description=WordPress Initialization Script
+After=network.target mariadb.service apache2.service
+
+[Service]
+Type=simple
+Environment=WORDPRESS_DB_NAME={{ wordpress_db_name }}
+Environment=WORDPRESS_DB_USER={{ wordpress_db_user }}
+Environment=WORDPRESS_DB_PASSWORD={{ wordpress_db_password }}
+Environment=WORDPRESS_DB_HOST={{ wordpress_db_host }}
+Environment=WP_URL={{ wp_url }}
+Environment=WP_TITLE={{ wp_title }}
+Environment=WP_ADMIN_USER={{ wp_admin_user }}
+Environment=WP_ADMIN_PASS={{ wp_admin_pass }}
+Environment=WP_ADMIN_EMAIL={{ wp_admin_email }}
+ExecStart=/init.sh
+Restart=on-failure
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+

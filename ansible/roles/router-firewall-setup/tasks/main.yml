@@ -1,0 +1,80 @@
+---
+# Role: Router/Firewall (Multi-homed VM)
+# Translated from Dockerfile: alpine:3.23.5
+# Note: This VM will be configured with multiple network interfaces
+
+- name: Install required packages
+  apt:
+    name:
+      - iptables
+      - iproute2
+      - net-tools
+      - curl
+      - wget
+      - openssh-server
+    update_cache: true
+    state: present
+
+- name: Enable IP forwarding
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    state: present
+    reload: true
+
+- name: Identify the default route interface (internet-facing)
+  ansible.builtin.set_fact:
+    wan_interface: "{{ ansible_default_ipv4.interface }}"
+
+- name: Configure iptables for NAT (masquerading)
+  ansible.builtin.template:
+    src: iptables_rules.sh.j2
+    dest: /usr/local/bin/iptables_rules.sh
+    mode: '0755'
+
+- name: Apply iptables rules
+  ansible.builtin.command: /usr/local/bin/iptables_rules.sh
+  changed_when: true
+  ignore_errors: true
+
+- name: Create /etc/iptables directory
+  ansible.builtin.file:
+    path: /etc/iptables
+    state: directory
+    mode: '0755'
+
+- name: Save iptables rules
+  ansible.builtin.shell: iptables-save > /etc/iptables/rules.v4
+  args:
+    creates: /etc/iptables/rules.v4
+  changed_when: true
+
+- name: Create systemd service for iptables persistence
+  ansible.builtin.copy:
+    content: |
+      [Unit]
+      Description=Restore iptables rules on boot
+      After=network.target
+
+      [Service]
+      Type=oneshot
+      ExecStart=/sbin/iptables-restore -f /etc/iptables/rules.v4
+      RemainAfterExit=yes
+
+      [Install]
+      WantedBy=multi-user.target
+    dest: /etc/systemd/system/iptables-restore.service
+    mode: '0644'
+
+- name: Enable iptables-restore service
+  ansible.builtin.systemd:
+    name: iptables-restore
+    enabled: true
+    daemon_reload: true
+
+- name: Add DNS configuration for all networks
+  ansible.builtin.lineinfile:
+    path: /etc/resolv.conf
+    line: "nameserver 10.11.1.50"
+    insertafter: EOF
+  when: "'10.11.1.50' not in lookup('file', '/etc/resolv.conf', errors='ignore')"

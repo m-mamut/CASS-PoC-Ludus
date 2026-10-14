@@ -1,0 +1,18 @@
+( echo "Subject: Re: URGENT: Need script for LDAP automation"
+  echo "To: admin01@tq.dev"
+  echo "MIME-Version: 1.0"
+  echo "Content-Type: multipart/mixed; boundary=BOUNDARY"
+  echo ""
+  echo "--BOUNDARY"
+  echo "Content-Type: text/plain; charset=UTF-8"
+  echo ""
+  echo "Hello,\n\nThanks for the heads-up. Since I'm currently on vacation, I won't be able to update the script, but here is the current version of automat.sh as requested.\n\nBest,\nDev Senior"
+  echo ""
+  echo "--BOUNDARY"
+  echo "Content-Type: application/x-sh; name=\"automat.sh\""
+  echo "Content-Disposition: attachment; filename=\"automat.sh\""
+  echo "Content-Transfer-Encoding: base64"
+  echo ""
+  base64 automat.sh
+  echo "--BOUNDARY--"
+) | sendmail -t

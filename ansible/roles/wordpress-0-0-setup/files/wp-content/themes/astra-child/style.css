@@ -1,0 +1,24 @@
+/*
+ Theme Name:   Astra Child
+ Template:     astra
+ Version:      1.0.0
+*/
+
+/* Tipografija unutar sadržaja (Astra i slične teme) */
+.single .entry-content h1,
+.page   .entry-content h1 { font-size: clamp(1.8rem, 2.6vw, 2.2rem); line-height: 1.2; }
+
+.single .entry-content h2,
+.page   .entry-content h2 { font-size: clamp(1.4rem, 2.0vw, 1.7rem); line-height: 1.25; }
+
+.single .entry-content h3,
+.page   .entry-content h3 { font-size: clamp(1.2rem, 1.6vw, 1.35rem); line-height: 1.3; }
+
+/* Paragrafi u tekstu */
+.single .entry-content p,
+.page   .entry-content p  { font-size: 1rem; line-height: 1.7; }
+
+/* Ako koristiš UAGB naslove unutar sadržaja */
+.single .entry-content .uagb-ifb-title,
+.page   .entry-content .uagb-ifb-title { font-size: clamp(1.2rem, 1.6vw, 1.35rem); line-height: 1.3; }
+
